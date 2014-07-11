@@ -25,6 +25,7 @@
 * Optional settings:
 ```
 	latch.setHost(LATCH_HOST);
+	latch.setPort(LATCH_PORT);
 ```
 
 * Call to Latch Server. Pairing will return an account id that you should store for future api calls
