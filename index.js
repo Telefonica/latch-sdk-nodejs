@@ -1,8 +1,27 @@
+/*
+Latch NodeJS SDK
+Copyright (C) 2014 Eleven Paths
 
-var crypto = require('crypto');
-var http = require('https');
-var config = require('./config');
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
 
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+var crypto = require('crypto')
+  , url = require('url')
+  , https = require('https')
+  , http = require('http')
+  , config = require('./config')
 
 var latch = {
     init: function(appId, secretKey) {
@@ -13,7 +32,11 @@ var latch = {
     setHost: function(host) {
         config.API_HOST = host;
     },
-
+    
+    setPort: function(port) {
+        config.API_PORT = port;
+    },
+    
     pairWithId: function(accountId, cb) {
         _http("GET", config.API_PAIR_WITH_ID_URL + "/" + accountId, '', '', cb);
     },
@@ -47,7 +70,6 @@ var signData = function (data) {
     } else {
         return '';
     }
-    
 }
 
 var dateFormat = function (date, fstr, utc) {
@@ -82,9 +104,17 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, cb) {
     var headers = {}
     headers[config.AUTHORIZATION_HEADER_NAME] = authorizationHeader;
     headers[config.DATE_HEADER_NAME] = utc;
+    
+    var latch_hostname = url.parse(config.API_HOST);
+    var httprequest;
+    if (latch_hostname.protocol == 'http:') {
+        httprequest = http;
+    } else if (latch_hostname.protocol == 'https:'){
+        httprequest = https;
+    }
 
     var options = {
-        hostname: config.API_HOST,
+        hostname: latch_hostname.hostname,
         port: config.API_PORT,
         path: queryString,
         method: HTTPMethod,
@@ -92,7 +122,8 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, cb) {
     };
 
     var latchResponse = '';
-    var req = http.request(options, function(res) {
+
+    var req = httprequest.request(options, function(res) {
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
             latchResponse += chunk;
