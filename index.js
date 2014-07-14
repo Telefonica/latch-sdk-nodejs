@@ -1,21 +1,21 @@
 /*
-Latch NodeJS SDK
-Copyright (C) 2014 Eleven Paths
+ * Latch NodeJS SDK
+ * Copyright (C) 2014 Eleven Paths
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 var crypto = require('crypto')
   , url = require('url')
@@ -24,17 +24,14 @@ var crypto = require('crypto')
   , config = require('./config')
 
 var latch = {
-    init: function(appId, secretKey) {
-        config.appId = appId;
-        config.secretKey = secretKey;
-    },
-    
-    setHost: function(host) {
-        config.API_HOST = host;
-    },
-    
-    setPort: function(port) {
-        config.API_PORT = port;
+    init: function(options) {
+        config.appId = options.appId;
+        config.secretKey = options.secretKey;
+        if ('hostname' in options) {
+            config.API_HOST = url.parse(options.hostname);
+        } else {
+            config.API_HOST = url.parse(config.API_HOST);
+        }
     },
     
     pairWithId: function(accountId, cb) {
@@ -101,40 +98,38 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, cb) {
     var authorizationHeader = config.AUTHORIZATION_METHOD + config.AUTHORIZATION_HEADER_FIELD_SEPARATOR + 
                            config.appId + config.AUTHORIZATION_HEADER_FIELD_SEPARATOR + signData(stringToSign);
 
-    var headers = {}
+    var headers = {};
     headers[config.AUTHORIZATION_HEADER_NAME] = authorizationHeader;
     headers[config.DATE_HEADER_NAME] = utc;
-    
-    var latch_hostname = url.parse(config.API_HOST);
-    var httprequest;
-    if (latch_hostname.protocol == 'http:') {
-        httprequest = http;
-    } else if (latch_hostname.protocol == 'https:'){
-        httprequest = https;
-    }
 
     var options = {
-        hostname: latch_hostname.hostname,
-        port: config.API_PORT,
-        path: queryString,
-        method: HTTPMethod,
-        headers: headers,
+        'hostname': config.API_HOST.hostname,
+        'port':     config.API_HOST.port,
+        'path':     queryString,
+        'method':   HTTPMethod,
+        'headers':  headers,
+        'protocol': config.API_HOST.protocol
     };
-
+    
     var latchResponse = '';
 
-    var req = httprequest.request(options, function(res) {
+    var req = (options.protocol == 'http:' ? http : https).request(options, function(res) {
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
             latchResponse += chunk;
         });
         res.on('end', function() {
-           cb(JSON.parse(latchResponse));
+            try {
+                var jsonresponse = JSON.parse(latchResponse);
+            } catch (e) {
+                console.log(e);
+            }
+            cb(jsonresponse);
         });
     });
 
     req.on('error', function(e) {
-      console.log('problem with request: ' + e.message);
+        console.log('problem with request: ' + e.message);
     });
 
     req.end();

@@ -17,15 +17,9 @@
     var latch = require('latch-sdk);
 ```
 
-* Initialize latch with your AppId and SecretKey
+* Initialize latch with your AppId and SecretKey. Hostname and port are optional.
 ```
-    latch.init(appId, secretKey);
-```
-
-* Optional settings:
-```
-	latch.setHost(LATCH_HOST);
-	latch.setPort(LATCH_PORT);
+    latch.init({ appId: 'MY_APP_ID', secretKey: 'MY_SECRET_KEY', hostname: 'MY_HOSTNAME, port: 'MY_PORT' });
 ```
 
 * Call to Latch Server. Pairing will return an account id that you should store for future api calls
