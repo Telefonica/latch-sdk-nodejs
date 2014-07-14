@@ -19,7 +19,11 @@
 
 var latch = require('../index.js');
 
-latch.init({ appId: 'MY_APP_ID', secretKey: 'MY_SECRET_KEY' });
-var response = latch.status('MY_ACCOUNT_ID', function(data) {
-    console.log(data);
+latch.init({ appId: 'MY_APPID', secretKey: 'MY_SECRETKEY' });
+var response = latch.status('MY_ACCOUNTID', function(err, result) {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log(result);
+    }
 });

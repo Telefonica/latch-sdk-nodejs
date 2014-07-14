@@ -25,6 +25,10 @@ var crypto = require('crypto')
 
 var latch = {
     init: function(options) {
+        if (!('appId' in options) || (!('secretKey' in options))) {
+            throw(new Error('You need to specify both the appId and secretKey'));
+        }
+        
         config.appId = options.appId;
         config.secretKey = options.secretKey;
         if ('hostname' in options) {
@@ -34,24 +38,24 @@ var latch = {
         }
     },
     
-    pairWithId: function(accountId, cb) {
-        _http("GET", config.API_PAIR_WITH_ID_URL + "/" + accountId, '', '', cb);
+    pairWithId: function(accountId, next) {
+        _http("GET", config.API_PAIR_WITH_ID_URL + "/" + accountId, '', '', next);
     },
 
-    pair: function(token, cb) {
-        _http("GET", config.API_PAIR_URL + "/" + token, '', '', cb);
+    pair: function(token, next) {
+        _http("GET", config.API_PAIR_URL + "/" + token, '', '', next);
     },
 
-    status: function(accountId, cb) {
-        _http("GET", config.API_CHECK_STATUS_URL + "/" + accountId, '', '', cb);
+    status: function(accountId, next) {
+        _http("GET", config.API_CHECK_STATUS_URL + "/" + accountId, '', '', next);
     },
 
-    operationStatus: function(accountId, operationId, cb) {
-        _http("GET", config.API_CHECK_STATUS_URL + "/" + accountId + "/op/" + operationId, '', '', cb);
+    operationStatus: function(accountId, operationId, next) {
+        _http("GET", config.API_CHECK_STATUS_URL + "/" + accountId + "/op/" + operationId, '', '', next);
     },
 
-    unpair: function(accountId, cb) {
-        _http("GET", config.API_UNPAIR_URL + "/" + accountId, '', '', cb);
+    unpair: function(accountId, next) {
+        _http("GET", config.API_UNPAIR_URL + "/" + accountId, '', '', next);
     },
 }; 
 
@@ -86,7 +90,7 @@ var dateFormat = function (date, fstr, utc) {
   });
 }
 
-var _http = function(HTTPMethod, queryString, xHeaders, utc, cb) {
+var _http = function(HTTPMethod, queryString, xHeaders, utc, next) {
     xHeaders = xHeaders || '';
     utc = utc || dateFormat(new Date (), config.UTC_STRING_FORMAT, true);
 
@@ -122,14 +126,14 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, cb) {
             try {
                 var jsonresponse = JSON.parse(latchResponse);
             } catch (e) {
-                console.log(e);
+                next(new Error('problem with JSON parse: ' + e.message));
             }
-            cb(jsonresponse);
+            next(null, jsonresponse);
         });
     });
 
     req.on('error', function(e) {
-        console.log('problem with request: ' + e.message);
+        next(new Error('problem with request: ' + e.message));
     });
 
     req.end();
