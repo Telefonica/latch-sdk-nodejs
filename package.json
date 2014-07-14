@@ -1,6 +1,6 @@
 {
   "name": "latch-sdk",
-  "version": "0.1",
+  "version": "0.1.0",
   "description": "Latch support for NodeJS",
   "keywords": ["latch", "auth", "authn", "authentication"],
   "repository": {
@@ -26,5 +26,5 @@
   },
   "scripts": {
   },
-  "engines": { "node": ">= 0.4.0" }
+  "engines": { "node": ">= 0.10.0" }
 }

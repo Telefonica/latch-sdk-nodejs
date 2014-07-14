@@ -22,8 +22,8 @@ var latch = require('../index.js');
 latch.init({ appId: 'MY_APPID', secretKey: 'MY_SECRETKEY' });
 var response = latch.status('MY_ACCOUNTID', function(err, result) {
     if (err) {
-        console.log(err);
+        console.log(util.inspect(err, { showHidden: true, depth: null, colors:true }));
     } else {
-        console.log(result);
+        console.log(util.inspect(result, { showHidden: true, depth: null, colors: true }));
     }
 });

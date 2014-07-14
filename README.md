@@ -24,7 +24,7 @@
 
 * Call to Latch Server. Pairing will return an account id that you should store for future api calls
 ```
-     var pairResponse = latch.pair(PAIRING_CODE, function(data) {
+     var pairResponse = latch.pair(PAIRING_CODE, function(err, data) {
              if (data["data"]["accountId"]) {
                  saveAccountIdForUserId(req.user.id, { accountId: data["data"]["accountId"] }, function(err) {
                      if (err) { return next(err); }
@@ -36,7 +36,7 @@
              }
      });
      
-     var statusResponse = latch.status(YOUR_ACCOUNT_ID, function(data) {
+     var statusResponse = latch.status(YOUR_ACCOUNT_ID, function(err, data) {
          console.log(data);
      });
 ```
