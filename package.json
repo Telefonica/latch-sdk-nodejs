@@ -1,6 +1,6 @@
 {
   "name": "latch-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Latch support for NodeJS",
   "keywords": ["latch", "auth", "authn", "authentication"],
   "repository": {
@@ -23,6 +23,8 @@
   "dependencies": {
   },
   "devDependencies": {
+      "chai": "latest",
+      "mocha": "latest"
   },
   "scripts": {
   },

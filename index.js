@@ -29,6 +29,10 @@ var latch = {
             throw(new Error('You need to specify both the appId and secretKey'));
         }
         
+        if ((options.appId.length != 20) || (options.secretKey.length != 40)) {
+            throw(new Error('Please check your appId and secretKey, they seem to be wrong'));
+        }
+        
         config.appId = options.appId;
         config.secretKey = options.secretKey;
         if ('hostname' in options) {
@@ -128,6 +132,7 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, next) {
             } catch (e) {
                 next(new Error('problem with JSON parse: ' + e.message));
             }
+            
             next(null, jsonresponse);
         });
     });
