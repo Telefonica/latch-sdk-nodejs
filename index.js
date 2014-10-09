@@ -22,6 +22,8 @@ var crypto = require('crypto')
   , https = require('https')
   , http = require('http')
   , config = require('./config')
+  , querystring = require('querystring')
+  , util = require('util')
 
 var latch = {
     init: function(options) {
@@ -43,24 +45,74 @@ var latch = {
     },
     
     pairWithId: function(accountId, next) {
-        _http("GET", config.API_PAIR_WITH_ID_URL + "/" + accountId, '', '', next);
+        _http("GET", config.API_PAIR_WITH_ID_URL + "/" + accountId, '', '', '', next);
     },
 
     pair: function(token, next) {
-        _http("GET", config.API_PAIR_URL + "/" + token, '', '', next);
+        _http("GET", config.API_PAIR_URL + "/" + token, '', '', '', next);
     },
 
     status: function(accountId, next) {
-        _http("GET", config.API_CHECK_STATUS_URL + "/" + accountId, '', '', next);
+        _http("GET", config.API_CHECK_STATUS_URL + "/" + accountId, '', '', '', next);
     },
 
     operationStatus: function(accountId, operationId, next) {
-        _http("GET", config.API_CHECK_STATUS_URL + "/" + accountId + "/op/" + operationId, '', '', next);
+        _http("GET", config.API_CHECK_STATUS_URL + "/" + accountId + "/op/" + operationId, '', '', '', next);
     },
 
     unpair: function(accountId, next) {
-        _http("GET", config.API_UNPAIR_URL + "/" + accountId, '', '', next);
+        _http("GET", config.API_UNPAIR_URL + "/" + accountId, '', '', '', next);
     },
+    
+    lock: function(accountId, operationId, next) {
+        operationId = operationId || '';
+        
+        if (operationId) {
+            _http("GET", config.API_LOCK_URL + "/" + accountId + "/op/" + operationId, '', '', '', next);
+        } else {
+            _http("GET", config.API_LOCK_URL + "/" + accountId, '', '', '', next);
+        }
+    },
+    
+    unlock: function(accountId, operationId, next) {
+        operationId = operationId || '';
+        if (operationId) {
+            _http("GET", config.API_UNLOCK_URL + "/" + accountId + "/op/" + operationId, '', '', '', next);
+        } else {
+            _http("GET", config.API_UNLOCK_URL + "/" + accountId, '', '', '', next);
+        }
+    },
+    
+    history: function(accountId, from, to, next) {
+        from = from || 0;
+        to = to || new Date().getTime();
+
+        _http("GET", config.API_HISTORY_URL + "/" + accountId + "/" + from + "/" + to, '', '', '', next);
+    },
+    
+    createOperation: function(parentId, name, twoFactor, lockOnRequest, next) {
+        var data = {
+            parentId: encodeURIComponent(parentId),
+            name: encodeURIComponent(name),
+            two_factor: encodeURIComponent(twoFactor),
+            lock_on_request: encodeURIComponent(lockOnRequest),
+        }
+        
+        _http("PUT", config.API_OPERATION_URL, '', '', data, next);
+    },
+    
+    removeOperation: function(operationId, next) {
+        _http("DELETE", config.API_OPERATION_URL + "/" + operationId, '', '', '', next);
+    },
+    
+    updateOperation: function(operationId, name, twoFactor, lockOnRequest, next) {
+        var data = {
+            name: encodeURIComponent(name),
+            two_factor: encodeURIComponent(twoFactor),
+            lock_on_request: encodeURIComponent(lockOnRequest),
+        }
+        _http("POST", config.API_OPERATION_URL + "/" + operationId, '', '', data, next);
+    }  
 }; 
 
 module.exports = latch;
@@ -94,21 +146,32 @@ var dateFormat = function (date, fstr, utc) {
   });
 }
 
-var _http = function(HTTPMethod, queryString, xHeaders, utc, next) {
+var _http = function(HTTPMethod, queryString, xHeaders, utc, params, next) {
     xHeaders = xHeaders || '';
     utc = utc || dateFormat(new Date (), config.UTC_STRING_FORMAT, true);
+    params = params || '';
 
     var stringToSign = (HTTPMethod.toUpperCase().trim() + "\n" + 
                     utc + "\n" + 
                     xHeaders + "\n" +
                     queryString.trim());
+                    
+    var post_data = querystring.stringify(params);
+    
+    if (params) {
+        stringToSign = stringToSign + "\n" + post_data;
+    }
        
     var authorizationHeader = config.AUTHORIZATION_METHOD + config.AUTHORIZATION_HEADER_FIELD_SEPARATOR + 
                            config.appId + config.AUTHORIZATION_HEADER_FIELD_SEPARATOR + signData(stringToSign);
-
+                           
     var headers = {};
     headers[config.AUTHORIZATION_HEADER_NAME] = authorizationHeader;
     headers[config.DATE_HEADER_NAME] = utc;
+    if (params) {
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
+        headers['Content-Length'] = post_data.length;
+    }
 
     var options = {
         'hostname': config.API_HOST.hostname,
@@ -140,6 +203,10 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, next) {
     req.on('error', function(e) {
         next(new Error('problem with request: ' + e.message));
     });
+    
+    if (params) {
+        req.write(post_data);
+    }
 
     req.end();
 }

@@ -22,13 +22,17 @@ var config = {
     secretKey: '',
     
     API_HOST: "https://latch.elevenpaths.com:443",
-    API_CHECK_STATUS_URL:"/api/0.7/status",
-    API_PAIR_URL:"/api/0.7/pair",
-    API_PAIR_WITH_ID_URL:"/api/0.7/pairWithId",
-    API_UNPAIR_URL:"/api/0.7/unpair",
+    API_CHECK_STATUS_URL: "/api/0.9/status",
+    API_PAIR_URL: "/api/0.9/pair",
+    API_PAIR_WITH_ID_URL: "/api/0.9/pairWithId",
+    API_UNPAIR_URL: "/api/0.9/unpair",
+    API_LOCK_URL: "/api/0.9/lock",
+    API_UNLOCK_URL: "/api/0.9/unlock",
+    API_HISTORY_URL: "/api/0.9/history",
+    API_OPERATION_URL: "/api/0.9/operation",
     
-    AUTHORIZATION_HEADER_NAME:"Authorization",
-    DATE_HEADER_NAME:"X-11Paths-Date",
+    AUTHORIZATION_HEADER_NAME: 'Authorization',
+    DATE_HEADER_NAME: 'X-11Paths-Date',
     AUTHORIZATION_METHOD: "11PATHS",
     AUTHORIZATION_HEADER_FIELD_SEPARATOR: " ",
 
