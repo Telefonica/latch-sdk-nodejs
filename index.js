@@ -182,10 +182,7 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, params, next) {
         'protocol': config.API_HOST.protocol
     };
     
-    console.log(stringToSign);
-    
     var latchResponse = '';
-    console.log(util.inspect(options, { showHidden: true, depth: null, colors:true }));
 
     var req = (options.protocol == 'http:' ? http : https).request(options, function(res) {
         res.setEncoding('utf8');
