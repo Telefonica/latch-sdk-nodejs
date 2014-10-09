@@ -92,10 +92,10 @@ var latch = {
     
     createOperation: function(parentId, name, twoFactor, lockOnRequest, next) {
         var data = {
-            parentId: encodeURIComponent(parentId),
-            name: encodeURIComponent(name),
-            two_factor: encodeURIComponent(twoFactor),
             lock_on_request: encodeURIComponent(lockOnRequest),
+            name: encodeURIComponent(name),
+            parentId: encodeURIComponent(parentId),
+            two_factor: encodeURIComponent(twoFactor),
         }
         
         _http("PUT", config.API_OPERATION_URL, '', '', data, next);
@@ -107,9 +107,9 @@ var latch = {
     
     updateOperation: function(operationId, name, twoFactor, lockOnRequest, next) {
         var data = {
+            lock_on_request: encodeURIComponent(lockOnRequest),
             name: encodeURIComponent(name),
             two_factor: encodeURIComponent(twoFactor),
-            lock_on_request: encodeURIComponent(lockOnRequest),
         }
         _http("POST", config.API_OPERATION_URL + "/" + operationId, '', '', data, next);
     }  
@@ -182,7 +182,10 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, params, next) {
         'protocol': config.API_HOST.protocol
     };
     
+    console.log(stringToSign);
+    
     var latchResponse = '';
+    console.log(util.inspect(options, { showHidden: true, depth: null, colors:true }));
 
     var req = (options.protocol == 'http:' ? http : https).request(options, function(res) {
         res.setEncoding('utf8');
