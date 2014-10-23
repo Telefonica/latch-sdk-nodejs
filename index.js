@@ -129,8 +129,10 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, next) {
             latchResponse += chunk;
         });
         res.on('end', function() {
+            var jsonresponse;
+
             try {
-                var jsonresponse = JSON.parse(latchResponse);
+                jsonresponse = JSON.parse(latchResponse);
             } catch (e) {
                 next(new Error('problem with JSON parse: ' + e.message));
             }
