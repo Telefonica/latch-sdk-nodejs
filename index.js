@@ -28,11 +28,11 @@ var latch = {
         if (!('appId' in options) || (!('secretKey' in options))) {
             throw(new Error('You need to specify both the appId and secretKey'));
         }
-        
+
         if ((options.appId.length != 20) || (options.secretKey.length != 40)) {
             throw(new Error('Please check your appId and secretKey, they seem to be wrong'));
         }
-        
+
         config.appId = options.appId;
         config.secretKey = options.secretKey;
         if ('hostname' in options) {
@@ -41,7 +41,7 @@ var latch = {
             config.API_HOST = url.parse(config.API_HOST);
         }
     },
-    
+
     pairWithId: function(accountId, next) {
         _http("GET", config.API_PAIR_WITH_ID_URL + "/" + accountId, '', '', next);
     },
@@ -61,7 +61,7 @@ var latch = {
     unpair: function(accountId, next) {
         _http("GET", config.API_UNPAIR_URL + "/" + accountId, '', '', next);
     },
-}; 
+};
 
 module.exports = latch;
 
@@ -71,7 +71,7 @@ var signData = function (data) {
         hmac.setEncoding('base64');
         hmac.write(data);
         hmac.end();
-        return hmac.read();     
+        return hmac.read();
     } else {
         return '';
     }
@@ -98,12 +98,12 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, next) {
     xHeaders = xHeaders || '';
     utc = utc || dateFormat(new Date (), config.UTC_STRING_FORMAT, true);
 
-    var stringToSign = (HTTPMethod.toUpperCase().trim() + "\n" + 
-                    utc + "\n" + 
+    var stringToSign = (HTTPMethod.toUpperCase().trim() + "\n" +
+                    utc + "\n" +
                     xHeaders + "\n" +
                     queryString.trim());
-       
-    var authorizationHeader = config.AUTHORIZATION_METHOD + config.AUTHORIZATION_HEADER_FIELD_SEPARATOR + 
+
+    var authorizationHeader = config.AUTHORIZATION_METHOD + config.AUTHORIZATION_HEADER_FIELD_SEPARATOR +
                            config.appId + config.AUTHORIZATION_HEADER_FIELD_SEPARATOR + signData(stringToSign);
 
     var headers = {};
@@ -118,7 +118,7 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, next) {
         'headers':  headers,
         'protocol': config.API_HOST.protocol
     };
-    
+
     var latchResponse = '';
 
     var req = (options.protocol == 'http:' ? http : https).request(options, function(res) {
@@ -132,7 +132,7 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, next) {
             } catch (e) {
                 next(new Error('problem with JSON parse: ' + e.message));
             }
-            
+
             next(null, jsonresponse);
         });
     });
