@@ -23,7 +23,7 @@ var crypto = require('crypto')
   , url = require('url')
   , https = require('https')
   , http = require('http')
-  , config = require('./config')
+  , config = require('./config');
 
 var latch = {
     init: function(options) {
@@ -77,7 +77,7 @@ var signData = function (data) {
     } else {
         return '';
     }
-}
+};
 
 var dateFormat = function (date, fstr, utc) {
   utc = utc ? 'getUTC' : 'get';
@@ -94,7 +94,7 @@ var dateFormat = function (date, fstr, utc) {
     // add leading zero if required
     return ('0' + m).slice (-2);
   });
-}
+};
 
 var _http = function(HTTPMethod, queryString, xHeaders, utc, next) {
     xHeaders = xHeaders || '';
@@ -144,4 +144,4 @@ var _http = function(HTTPMethod, queryString, xHeaders, utc, next) {
     });
 
     req.end();
-}
+};
