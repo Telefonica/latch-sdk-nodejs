@@ -17,11 +17,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+API_VERSION = "1.3"
+
 var config = {
     appId: '',
     secretKey: '',
-    
-    API_VERSION: "1.3",
     
     API_HOST: "https://latch.elevenpaths.com:443",
     API_CHECK_STATUS_URL: "/api/" + API_VERSION + "/status",
@@ -30,7 +30,7 @@ var config = {
     API_UNPAIR_URL: "/api/" + API_VERSION + "/unpair",
     API_LOCK_URL: "/api/" + API_VERSION + "/lock",
     API_UNLOCK_URL: "/api/" + API_VERSION + "/unlock",
-    API_HISTORY_URL = "/api/" + API_VERSION + "/history",
+    API_HISTORY_URL: "/api/" + API_VERSION + "/history",
     API_OPERATION_URL: "/api/" + API_VERSION + "/operation",
     API_SUBSCRIPTION_URL: "/api/" + API_VERSION + "/subscription",
     API_APPLICATION_URL: "/api/" + API_VERSION + "/application",

@@ -50,7 +50,7 @@ var latch = {
         _http("GET", config.API_PAIR_URL + "/" + token, '', '', '', next);
     },
 
-    status: function(accountId, next) {
+    status: function(accountId, silent, nootp, next) {
         var url = config.API_CHECK_STATUS_URL + "/" + accountId;
         if (nootp != ''){
             url += '/nootp'
@@ -61,7 +61,7 @@ var latch = {
         _http("GET", url, '', '', '', next);
     },
 
-    operationStatus: function(accountId, operationId, next) {
+    operationStatus: function(accountId, operationId, silent, nootp, next) {
         var url = config.API_CHECK_STATUS_URL + "/" + accountId + "/op/" + operationId;
         if (nootp != ''){
             url += '/nootp'
