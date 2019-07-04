@@ -52,10 +52,10 @@ var latch = {
 
     status: function(accountId, silent, nootp, next) {
         var url = config.API_CHECK_STATUS_URL + "/" + accountId;
-        if (nootp != ''){
+        if (nootp != null){
             url += '/nootp'
         }
-        if (silent != ''){
+        if (silent != null){
             url += '/silent';
         }
         _http("GET", url, '', '', '', next);
@@ -63,10 +63,10 @@ var latch = {
 
     operationStatus: function(accountId, operationId, silent, nootp, next) {
         var url = config.API_CHECK_STATUS_URL + "/" + accountId + "/op/" + operationId;
-        if (nootp != ''){
+        if (nootp != null){
             url += '/nootp'
         }
-        if (silent != ''){
+        if (silent != null){
             url += '/silent';
         }
         _http("GET", url, '', '', '', next);
@@ -77,98 +77,99 @@ var latch = {
     },
 
     lock: function(accountId, operationId, next) {
-        if (operationId == '') {
-            _http("POST", config.API_LOCK_URL + "/" + accountId, '', '', '', next);
-        } else{
-            _http("POST", config.API_LOCK_URL + "/" + accountId + "/op/" + operationId, '', '', '', next);
+        var url = config.API_LOCK_URL + "/" + accountId;
+        if (operationId != null) {
+            url += "/op/" + operationId
         }
+        _http("POST", url, '', '', '', next);
     },
 
     unlock: function(accountId, operationId, next) {
-        if (operationId == '') {
-            _http("POST", config.API_UNLOCK_URL + "/" + accountId, '', '', '', next);
-        } else{
-            _http("POST", config.API_UNLOCK_URL + "/" + accountId + "/op/" + operationId, '', '', '', next);
+        var url = config.API_UNLOCK_URL + "/" + accountId;
+        if (operationId != null) {
+            url += "/op/" + operationId
         }
+        _http("POST", url, '', '', '', next);
     },
 
-    history: function(accountId, fromTime, toTime) {
+    history: function(accountId, fromTime, toTime, next) {
         if (toTime == '') {
             toTime = int(round(time.time() * 1000))
         }
-        _http("GET", self.API_HISTORY_URL + "/" + accountId + "/" + String(fromTime) + "/" + String(toTime), '', '', '', next);
+        _http("GET", config.API_HISTORY_URL + "/" + accountId + "/" + String(fromTime) + "/" + String(toTime), '', '', '', next);
     },
 
-    createOperation: function(parentId, name, twoFactor, lockOnRequest) {
+    createOperation: function(parentId, name, twoFactor, lockOnRequest, next) {
         var params = {parentId: parentId, name: name, two_factor: twoFactor, lock_on_request: lockOnRequest};
-        _http("PUT", self.API_OPERATION_URL, params, '', '', next);
+        _http("PUT", config.API_OPERATION_URL, params, '', '', next);
     },
 
-    updateOperation: function(operationId, name, twoFactor, lockOnRequest) {
+    updateOperation: function(operationId, name, twoFactor, lockOnRequest, next) {
         var params = {name: name, two_factor: twoFactor, lock_on_request: lockOnRequest};
-        _http("POST", self.API_OPERATION_URL + "/" + operationId, params, '', '', next);
+        _http("POST", config.API_OPERATION_URL + "/" + operationId, params, '', '', next);
     },
 
-    deleteOperation: function(operationId) {
-        _http("DELETE", self.API_OPERATION_URL + "/" + operationId, '', '', '', next);
+    deleteOperation: function(operationId, next) {
+        _http("DELETE", config.API_OPERATION_URL + "/" + operationId, '', '', '', next);
     },
 
-    getOperations: function(operationId) {
-        if (operationId == '') {
-            _http("GET", self.API_OPERATION_URL, '', '', '', next);
-        } else{
-            _http("GET", self.API_OPERATION_URL + "/" + operationId, '', '', '', next);
-        }
-    },
-
-    getInstances: function(accountId, operationId, next) {
-        if (operationId == '') {
-            _http("GET", config.API_INSTANCE_URL + "/" + accountId, '', '', '', next);
-        } else {
-            _http("GET", config.API_INSTANCE_URL + "/" + accountId + "/op/" + operationId , '', '', '', next);
-        }
-    },
-
-    instanceStatus: function(instanceId, accountId, operationId, silent, nootp, next) {
-        var url = '';
-        if (operationId == '') {
-            url = config.API_CHECK_STATUS_URL + "/" + accountId + "/i/" + instanceId;
-        } else {
-            url = config.API_CHECK_STATUS_URL + "/" + accountId + "/op/" + operationId + "/i/" + instanceId;
-        }
-        if (nootp != ''){
-            url += '/nootp'
-        }
-        if (silent != ''){
-            url += '/silent';
+    getOperations: function(operationId, next) {
+        var url = config.API_OPERATION_URL;
+        if (operationId != null) {
+            url += "/" + operationId;
         }
         _http("GET", url, '', '', '', next);
     },
 
+    getInstances: function(accountId, operationId, next) {
+        var url = config.API_INSTANCE_URL + "/" + accountId;
+        if (operationId != null) {
+            url += "/op/" + operationId;
+        }
+        _http("GET", url, '', '', '', next);
+    },
+
+    instanceStatus: function(instanceId, accountId, operationId, silent, nootp, next) {
+        var url = config.API_CHECK_STATUS_URL + "/" + accountId;             
+        if (operationId != null) {
+            url += "/op/" + operationId;
+        }
+        url += "/i/" + instanceId;
+        if (nootp != null){
+            url += '/nootp'
+        }
+        if (silent != null){
+            url += '/silent';
+        }
+        _http("GET", url, '', '', '', next);        
+    },
+
     createInstance: function(name, accountId, operationId, next) {
         var params = {instances: name};
-        if (operationId == '') {
-            _http("PUT", config.API_INSTANCE_URL + "/" + accountId, params, '', '', next);
-        } else {
-            _http("PUT", config.API_INSTANCE_URL + "/" + accountId + '/op/' + operationId, params, '', '', next);
+        var url = config.API_INSTANCE_URL + "/" + accountId;      
+        if (operationId != null) {
+            url += "/op/" + operationId;
         }
+        _http("PUT", url, params, '', '', next);
     },
 
     updateInstance: function(instanceId, accountId, operationId, name, twoFactor, lockOnRequest, next) {
         var params = {name: name, two_factor: twoFactor, lock_on_request: lockOnRequest};
-        if (operationId == '') {
-            _http("POST", config.API_INSTANCE_URL + "/" + accountId + '/i/' + instanceId, params, '', '', next);
-        } else {
-            _http("POST", config.API_INSTANCE_URL + "/" + accountId + '/op/' + operationId + '/i/' + instanceId, params, '', '', next);
+        var url = config.API_INSTANCE_URL + "/" + accountId;             
+        if (operationId != null) {
+            url += "/op/" + operationId;
         }
+        url += "/i/" + instanceId;
+        _http("POST", url, params, '', '', next);
     },
 
     deleteInstance: function(instanceId, accountId, operationId, next) {
-        if (operationId == '') {
-            _http("DELETE", config.API_INSTANCE_URL + "/" + accountId + '/i/' + instanceId, '', '', '', next);
-        } else {
-            _http("DELETE", config.API_INSTANCE_URL + "/" + accountId + '/op/' + operationId + '/i/' + instanceId, '', '', '', next);
+        var url = config.API_INSTANCE_URL + "/" + accountId;                    
+        if (operationId != null) {
+            url += "/op/" + operationId;
         }
+        url += "/i/" + instanceId;
+        _http("DELETE", url, '', '', '', next);
     }
 };
 
@@ -214,10 +215,20 @@ var _http = function(HTTPMethod, queryString, params, xHeaders, utc, next) {
 
     if (params != '') {
         var serialized_params = "";
-        //TODO: Sort params!!?
+
+        var sortable = [];
         for (var key in params) {
-            serialized_params += key + "=" + encodeURI(params[key]);
+            sortable.push([key, params[key]]);
         }
+        sortable.sort();
+        
+        for (var key in sortable) {
+            if (serialized_params != "") {
+                serialized_params += "&";
+            }
+            serialized_params += sortable[key][0] + "=" + sortable[key][1];
+        }
+
         stringToSign += "\n" + serialized_params;
     }
 
@@ -266,10 +277,12 @@ var _http = function(HTTPMethod, queryString, params, xHeaders, utc, next) {
     });
 
     // post the data
-    if (HTTPMethod == "POST" || HTTPMethod == "PUT")
-    //if (params != None)
-    //        parameters = urllib.urlencode(params)
-    req.write(serialized_params);
+    if (HTTPMethod == "POST" || HTTPMethod == "PUT") {
+        if (params != '') {
+            req.write(serialized_params);
+        }
+    }
+
 
     req.end();
 };
