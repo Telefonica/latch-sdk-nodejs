@@ -14,7 +14,7 @@
 
 * You need to include the npm package 'latch-sdk' in your package.json file and then require the "latch-sdk" in your NodeJS file.
 ```
-    var latch = require('latch-sdk);
+    var latch = require('latch-sdk');
 ```
 
 * Initialize latch with your AppId and SecretKey. Hostname and port are optional.
@@ -36,7 +36,7 @@
              }
      });
      
-     var statusResponse = latch.status(YOUR_ACCOUNT_ID, function(err, data) {
+     var statusResponse = latch.status(YOUR_ACCOUNT_ID, null, null, function(err, data) {
          console.log(data);
      });
 ```
