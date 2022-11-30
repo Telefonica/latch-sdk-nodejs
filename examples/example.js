@@ -27,3 +27,22 @@ var response = latch.status('MY_ACCOUNTID', function(err, result) {
         console.log(util.inspect(result, { showHidden: true, depth: null, colors: true }));
     }
 });
+
+
+/* PAIR EXAMPLE WITH WEB3
+let MY_APPID = "fsdfadsfdsfa"
+let MY_SECRETKEY = "afsdfdsgadfggfdsagfasgfdg"
+
+let ClientWallet = "0xababababa"
+let ClientSignature = "0xabababbababababababbabababababbaba"
+
+latch.init({ appId: MY_APPID, secretKey: MY_SECRETKEY });
+
+latch.pairWithId("user@mail.com", function(err, data) {
+    if (data["data"]["accountId"]) {
+        console.log(data["data"]["accountId"]);
+    } else if (data["error"]) {
+        console.log("Error");
+    }
+}, ClientWallet, ClientSignature);
+ */
