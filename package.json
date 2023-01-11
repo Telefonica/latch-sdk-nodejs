@@ -2,7 +2,12 @@
   "name": "latch-sdk",
   "version": "0.2.0",
   "description": "Latch support for NodeJS",
-  "keywords": ["latch", "auth", "authn", "authentication"],
+  "keywords": [
+    "latch",
+    "auth",
+    "authn",
+    "authentication"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/elevenpaths/latch-sdk-nodejs.git"
@@ -13,20 +18,21 @@
   "author": {
     "name": "ElevenPaths",
     "email": "latch-support@support.elevenpaths.com",
-    "url": "https://latch.elevenpaths.com/"
+    "url": "https://latch.telefonica.com/"
   },
-  "licenses": [ {
-    "type": "LGPL 2.1",
-    "url": "http://www.gnu.org/licenses/lgpl-2.1.html"
-  } ],
+  "licenses": [
+    {
+      "type": "LGPL 2.1",
+      "url": "http://www.gnu.org/licenses/lgpl-2.1.html"
+    }
+  ],
   "main": "index.js",
-  "dependencies": {
-  },
   "devDependencies": {
-      "chai": "latest",
-      "mocha": "latest"
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0"
   },
-  "scripts": {
-  },
-  "engines": { "node": ">= 0.10.0" }
+  "scripts": {},
+  "engines": {
+    "node": ">= 0.10.0"
+  }
 }
