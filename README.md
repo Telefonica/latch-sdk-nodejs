@@ -77,4 +77,4 @@ The two additional parameters are:
     }, WEB3WALLET, WEB3SIGNATURE);
 ```
 
-You have an example of use in the file examples/example.js
+You have an example of use in the file [example](examples/example.js)
