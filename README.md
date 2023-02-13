@@ -40,3 +40,41 @@
          console.log(data);
      });
 ```
+
+#### Using the SDK in NodeJS for Web3 services ####
+
+For using the NodeJS SDK within an Web3 service, you must complain with the following:
+
+* It is necessary to have a developer subscription that allows you to create web3 apps.
+* You need a wallet to operate on Polygon. You can easily create one through Metamask.
+
+### Creation of a WEB3 Latch app ###
+[Creation of a WEB3 Latch app](doc/Latch_WEB3_Apps.pdf)
+
+Once you have your developer Latch account created, you must logging in the website, and you see your application list (you could have it empty):
+
+The two additional parameters are:
+- WEB3WALLET: The Ethereum-based address wallet for the user that wants to pair the service.
+- WEB3SIGNATURE: A proof-of-ownership signature of a constant, in order to verify that the user owns the private key of the wallet. You can use https://etherscan.io/verifiedSignatures# to sign the following message:- MESSAGE TO SIGN : "Latch-Web3"
+
+* Call to Latch Server for pairing as usual, but with the newly methods:
+```
+    let MY_APPID = "<MY_APPID>"
+    let MY_SECRETKEY = "<MY_SECRETKEY>"
+    
+    let WEB3WALLET = "<WEB3WALLET>"
+    let WEB3SIGNATURE = "<WEB3SIGNATURE>"
+    let PAIRING_CODE = "<PAIRING_CODE>"
+    
+    latch.init({ appId: MY_APPID, secretKey: MY_SECRETKEY });
+    
+    latch.pair(PAIRING_CODE, function(err, data) {
+        if (data["data"]["accountId"]) {
+            console.log(data["data"]["accountId"]);
+        } else if (data["error"]) {
+            console.log("Error");
+        }
+    }, WEB3WALLET, WEB3SIGNATURE);
+```
+
+You have an example of use in the file examples/example.js

@@ -30,19 +30,39 @@ var response = latch.status('MY_ACCOUNTID', function(err, result) {
 
 
 /* PAIR EXAMPLE WITH WEB3
-let MY_APPID = "fsdfadsfdsfa"
-let MY_SECRETKEY = "afsdfdsgadfggfdsagfasgfdg"
+let MY_ACCOUNTID = "<MY_ACCOUNTID>"
+let MY_APPID = "<MY_APPID>"
+let MY_SECRETKEY = "<MY_SECRETKEY>"
 
-let ClientWallet = "0xababababa"
-let ClientSignature = "0xabababbababababababbabababababbaba"
+let WEB3WALLET = "<WEB3WALLET>"
+let WEB3SIGNATURE = "<WEB3SIGNATURE>"
 
 latch.init({ appId: MY_APPID, secretKey: MY_SECRETKEY });
 
-latch.pairWithId("user@mail.com", function(err, data) {
+latch.pairWithId(MY_ACCOUNTID, function(err, data) {
     if (data["data"]["accountId"]) {
         console.log(data["data"]["accountId"]);
     } else if (data["error"]) {
         console.log("Error");
     }
-}, ClientWallet, ClientSignature);
+}, WEB3WALLET, WEB3SIGNATURE);
+
+
+
+let MY_APPID = "<MY_APPID>"
+let MY_SECRETKEY = "<MY_SECRETKEY>"
+
+let WEB3WALLET = "<WEB3WALLET>"
+let WEB3SIGNATURE = "<WEB3SIGNATURE>"
+let PAIRING_CODE = "<PAIRING_CODE>"
+
+latch.init({ appId: MY_APPID, secretKey: MY_SECRETKEY });
+
+latch.pair(PAIRING_CODE, function(err, data) {
+    if (data["data"]["accountId"]) {
+        console.log(data["data"]["accountId"]);
+    } else if (data["error"]) {
+        console.log("Error");
+    }
+}, WEB3WALLET, WEB3SIGNATURE);
  */
