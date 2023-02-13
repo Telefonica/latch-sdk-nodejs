@@ -29,7 +29,7 @@ var response = latch.status('MY_ACCOUNTID', function(err, result) {
 });
 
 
-/* PAIR EXAMPLE WITH WEB3
+/* // PAIR EXAMPLE WITH WEB3
 let MY_ACCOUNTID = "<MY_ACCOUNTID>"
 let MY_APPID = "<MY_APPID>"
 let MY_SECRETKEY = "<MY_SECRETKEY>"
@@ -48,7 +48,7 @@ latch.pairWithId(MY_ACCOUNTID, function(err, data) {
 }, WEB3WALLET, WEB3SIGNATURE);
 
 
-
+// PAIR EXAMPLE WITH WEB3 USING PAIRING_CODE
 let MY_APPID = "<MY_APPID>"
 let MY_SECRETKEY = "<MY_SECRETKEY>"
 

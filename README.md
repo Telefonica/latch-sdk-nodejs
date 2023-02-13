@@ -10,7 +10,7 @@
 * To get the "Application ID" and "Secret", (fundamental values for integrating Latch in any application), it’s necessary to register a developer account in Latch's website: https://latch.telefonica.com. On the upper right side, click on "Developer area".
 
 
-#### Using the SDK in NodeJS ####
+#### USING THE SDK IN NODEJS ####
 
 * You need to include the npm package 'latch-sdk' in your package.json file and then require the "latch-sdk" in your NodeJS file.
 ```
@@ -41,11 +41,12 @@
      });
 ```
 
-#### Using the SDK in NodeJS for Web3 services ####
+#### USING THE SDK IN NODEJS FOR WEB3 SERVICES ####
 
 For using the NodeJS SDK within an Web3 service, you must complain with the following:
 
 * It is necessary to have a developer subscription that allows you to create web3 apps.
+* You need metamask extension for Google Chrome [Download metamask](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn)
 * You need a wallet to operate on Polygon. You can easily create one through Metamask.
 
 ### Creation of a WEB3 Latch app ###
