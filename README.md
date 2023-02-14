@@ -24,21 +24,15 @@
 
 * Call to Latch Server. Pairing will return an account id that you should store for future api calls
 ```
-     var pairResponse = latch.pair(PAIRING_CODE, function(err, data) {
-             if (data["data"]["accountId"]) {
-                 saveAccountIdForUserId(req.user.id, { accountId: data["data"]["accountId"] }, function(err) {
-                     if (err) { return next(err); }
-                 });
-                 res.redirect("/");
-             } else if (data["error"]) {
-                 var message = "There has been an error with Latch, try again";
-                 res.render("setup", { user: req.user, message: message, accountId: "" });
-             }
-     });
-     
-     var statusResponse = latch.status(YOUR_ACCOUNT_ID, null, null, function(err, data) {
-         console.log(data);
-     });
+    let PAIRING_CODE = "<PAIRING_CODE>"
+    
+    let response = latch.pair(PAIRING_CODE, function (err, result) {
+        if (err) {
+            console.log(util.inspect(err, {showHidden: true, depth: null, colors: true}));
+        } else {
+            console.log(util.inspect(result, {showHidden: true, depth: null, colors: true}));
+        }
+    });
 ```
 
 #### USING THE SDK IN NODEJS FOR WEB3 SERVICES ####
@@ -69,11 +63,11 @@ The two additional parameters are:
     
     latch.init({ appId: MY_APPID, secretKey: MY_SECRETKEY });
     
-    latch.pair(PAIRING_CODE, function(err, data) {
-        if (data["data"]["accountId"]) {
-            console.log(data["data"]["accountId"]);
-        } else if (data["error"]) {
-            console.log("Error");
+    let response = latch.pair(PAIRING_CODE, function (err, result) {
+        if (err) {
+            console.log(util.inspect(err, {showHidden: true, depth: null, colors: true}));
+        } else {
+            console.log(util.inspect(result, {showHidden: true, depth: null, colors: true}));
         }
     }, WEB3WALLET, WEB3SIGNATURE);
 ```
