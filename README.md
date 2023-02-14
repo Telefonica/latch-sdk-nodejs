@@ -50,7 +50,8 @@ Once you have your developer Latch account created, you must logging in the webs
 
 The two additional parameters are:
 - WEB3WALLET: The Ethereum-based address wallet for the user that wants to pair the service.
-- WEB3SIGNATURE: A proof-of-ownership signature of a constant, in order to verify that the user owns the private key of the wallet. You can use https://etherscan.io/verifiedSignatures# to sign the following message:- MESSAGE TO SIGN : "Latch-Web3"
+- WEB3SIGNATURE: A proof-of-ownership signature of a constant, in order to verify that the user owns the private key of the wallet. You can use https://etherscan.io/verifiedSignatures# to sign the following message:
+- MESSAGE TO SIGN : "Latch-Web3"
 
 * Call to Latch Server for pairing as usual, but with the newly methods:
 ```
