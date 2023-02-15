@@ -33,11 +33,11 @@ describe("latch", function(){
         });
         
         it("should parse the hostname into an URI object", function(){
-            var args = {appId: '12345678901234567890', secretKey: '1234567890123456789012345678901234567890', hostname: 'https://latch.elevenpaths.com'}
+            var args = {appId: '12345678901234567890', secretKey: '1234567890123456789012345678901234567890', hostname: 'https://latch.telefonica.com'}
  
             latch.init(args);
             expect(config.API_HOST.protocol).to.equal('https:');
-            expect(config.API_HOST.hostname).to.equal('latch.elevenpaths.com');
+            expect(config.API_HOST.hostname).to.equal('latch.telefonica.com');
         });
     });
     
