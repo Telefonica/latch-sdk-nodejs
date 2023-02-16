@@ -1,6 +1,6 @@
 /*
  * Latch NodeJS SDK
- * Copyright (C) 2014 Eleven Paths
+ * Copyright (C) 2023 Telefonica Digital
 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,7 @@ var config = {
     appId: '',
     secretKey: '',
     
-    API_HOST: "https://latch.elevenpaths.com:443",
+    API_HOST: "https://latch.telefonica.com:443",
     API_CHECK_STATUS_URL: "/api/" + API_VERSION + "/status",
     API_PAIR_URL: "/api/" + API_VERSION + "/pair",
     API_PAIR_WITH_ID_URL: "/api/" + API_VERSION + "/pairWithId",

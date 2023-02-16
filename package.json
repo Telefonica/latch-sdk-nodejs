@@ -1,19 +1,19 @@
 {
   "name": "latch-sdk",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Latch support for NodeJS",
   "keywords": ["latch", "auth", "authn", "authentication"],
   "repository": {
     "type": "git",
-    "url": "git://github.com/elevenpaths/latch-sdk-nodejs.git"
+    "url": "https://github.com/Telefonica/latch-sdk-nodejs.git"
   },
   "bugs": {
-    "url": "http://github.com/elevenpaths/latch-sdk-nodejs/issues"
+    "url": "https://github.com/Telefonica/latch-sdk-nodejs/issues"
   },
   "author": {
-    "name": "ElevenPaths",
-    "email": "latch-support@support.elevenpaths.com",
-    "url": "https://latch.elevenpaths.com/"
+    "name": "TelefonicaDigital",
+    "email": "soporte.latch@telefonica.com",
+    "url": "https://latch.telefonica.com/"
   },
   "licenses": [ {
     "type": "LGPL 2.1",
