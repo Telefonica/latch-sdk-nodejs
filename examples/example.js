@@ -1,5 +1,5 @@
 /*
- * Latch NodeJS SDK
+ * Latch NodeJS SDK Example
  * Copyright (C) 2023 Telefonica Digital
 
  * This library is free software; you can redistribute it and/or
