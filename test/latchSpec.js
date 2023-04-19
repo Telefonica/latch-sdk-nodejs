@@ -63,7 +63,7 @@ describe("latch", function(){
     describe("Latch API requests", function(){
         it("should receive an API error", function(done){
             var args = {appId: '12345678901234567890', secretKey: '1234567890123456789012345678901234567890'}
- 
+
             latch.init(args);
             var response = latch.status('1234', function(err, result) {
                 expect(result).to.have.a.property('error').that.is.an('object');

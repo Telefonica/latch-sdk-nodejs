@@ -42,12 +42,24 @@ var latch = {
         }
     },
 
-    pairWithId: function(accountId, next) {
-        _http("GET", config.API_PAIR_WITH_ID_URL + "/" + accountId, '', '', '', next);
+    pairWithId: function (accountId, next, web3Wallet, web3Signature) {
+        if (typeof web3Wallet === 'undefined' || typeof web3Signature === 'undefined') {
+            _http("GET", config.API_PAIR_WITH_ID_URL + "/" + accountId, '', '', '', next);
+        }
+        else {
+            let params = {wallet: web3Wallet, signature: web3Signature};
+            _http("POST", config.API_PAIR_WITH_ID_URL + "/" + accountId, params, '', '', next);
+        }
     },
 
-    pair: function(token, next) {
-        _http("GET", config.API_PAIR_URL + "/" + token, '', '', '', next);
+    pair: function (token, next, web3Wallet, web3Signature) {
+        if (typeof web3Wallet === 'undefined' || typeof web3Signature === 'undefined') {
+            _http("GET", config.API_PAIR_URL + "/" + token, '', '', '', next);
+        }
+        else {
+            let params = {wallet: web3Wallet, signature: web3Signature};
+            _http("POST", config.API_PAIR_URL + "/" + token, params, '', '', next);
+        }
     },
 
     status: function(accountId, silent, nootp, next) {
