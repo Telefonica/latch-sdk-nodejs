@@ -32,6 +32,7 @@ const MY_SECRETKEY = "<MY_SECRETKEY>";
 const MY_ACCOUNTID = "<MY_ACCOUNTID>"
 const MY_ACCOUNT_NAME = "<MY_ACCOUNT_NAME>"
 const PAIRING_CODE = "<PAIRING_CODE>"
+const OPERATIONID = "<OPERATIONID>"
 
 // Mandatory for web3
 const WEB3WALLET = "<WEB3WALLET>"
@@ -102,6 +103,18 @@ function example_get_status() {
     });
 }
 
+function example_get_status_operation() {
+
+    operationStatus = latch.operationStatus(MY_ACCOUNTID, OPERATIONID, null, null, function (err, result) {
+        if (err) {
+            console.log(util.inspect(err, {showHidden: true, depth: null, colors: true}));
+        } else {
+            console.log(util.inspect(result, {showHidden: true, depth: null, colors: true}));
+        }
+    });
+}
+
+
 // LOCK STATUS
 function example_lock() {
     let response = latch.lock(MY_ACCOUNTID, null, function (err, result) {
@@ -124,6 +137,28 @@ function example_unlock() {
     });
 }
 
+// LOCK FOR OPERATION
+function example_lock_for_operation() {
+    let response = latch.lock(MY_ACCOUNTID, OPERATIONID, function (err, result) {
+        if (err) {
+            console.log(util.inspect(err, {showHidden: true, depth: null, colors: true}));
+        } else {
+            console.log(util.inspect(result, {showHidden: true, depth: null, colors: true}));
+        }
+    });
+}
+
+// UNLOCK FOR OPERATION
+function example_unlock_for_operation() {
+    let response = latch.unlock(MY_ACCOUNTID, OPERATIONID, function (err, result) {
+        if (err) {
+            console.log(util.inspect(err, {showHidden: true, depth: null, colors: true}));
+        } else {
+            console.log(util.inspect(result, {showHidden: true, depth: null, colors: true}));
+        }
+    });
+}
+
 // UNPAIR
 function example_unpair() {
     let response = latch.unpair(MY_ACCOUNTID, function (err, result) {
@@ -137,7 +172,11 @@ function example_unpair() {
 
 
 // TO RUN EXAMPLE
-example_pair_with_id_web3()
-example_get_status()
-example_lock()
-example_unpair()
+//example_pair_with_id_web3()
+//example_get_status()
+//example_get_status_operation()
+//example_lock()
+//example_lock_for_operation()
+//example_unlock()
+//example_unlock_for_operation()
+//example_unpair()
