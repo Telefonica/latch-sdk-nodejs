@@ -1,6 +1,6 @@
 /*
  * Latch NodeJS SDK Example
- * Copyright (C) 2023 Telefonica Digital
+ * Copyright (C) 2024 Telefonica Innovación Digital
 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
