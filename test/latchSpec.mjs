@@ -18,8 +18,9 @@
  */
 
 import { expect } from "chai";
-import config from "../config.js";
-import latch from "../index.js";
+import { config } from "../config.js";
+import { createOperation, createTotp, deleteOperation, deleteTotp, getOperations, init, lock, LOCK_ON_REQUEST, operationStatus, pair, pairWithId, TWO_FACTOR, unlock, unpair, validateTotp, status, history, updateOperation, createInstance, deleteInstance, getInstances, instanceStatus, updateInstance, getTotp, checkControlStatus } from '../index.js';
+import { describe, it, before } from "mocha";
 
 const NAME_OPERATION = 'OPERATION-TEST-VALIDATION'
 const NAME_INSTANCE = 'INSTANCE-TEST-VALIDATION'
@@ -36,267 +37,198 @@ if (appId == '' || secretKey == '' || email == '' || code == '') throw new Error
 
 let appValidConfig = { appId, secretKey };
 
-describe("latch", function () {
-    describe("#latch.init()", function () {
-        it("should stop if the appId is missing", function () {
-            var args = { secretKey: '1234' }
+describe("Latch", function () {
+    describe("Set app config", function () {
+        it("should stop if the appId is missing", async function () {
+            let appConfig = { secretKey: '1234' }
 
-            expect(latch.init.bind(latch, args)).to.throw(Error);
-            expect(latch.init.bind(latch, args)).to.throw(/specify both the appId and secretKey/);
+            expect(() => init(appConfig)).to.throw(Error);
+            expect(() => init(appConfig)).to.throw(/specify both the appId and secretKey/);
         });
 
-        it("should stop if the secretKey is missing", function () {
-            var args = { appId: '1234' }
+        it("should stop if the secretKey is missing", async function () {
+            let appConfig = { appId: '1234' }
 
-            expect(latch.init.bind(latch, args)).to.throw(Error);
-            expect(latch.init.bind(latch, args)).to.throw(/specify both the appId and secretKey/);
+            expect(() => init(appConfig)).to.throw(Error);
+            expect(() => init(appConfig)).to.throw(/specify both the appId and secretKey/);
         });
 
-        it("should stop if the appId is not 20 chars", function () {
-            var args = { appId: '1234', secretKey: '1234567890123456789012345678901234567890' }
+        it("should stop if the appId is not 20 chars", async function () {
+            let appConfig = { appId: '1234', secretKey: '1234567890123456789012345678901234567890' }
 
-            expect(latch.init.bind(latch, args)).to.throw(Error);
-            expect(latch.init.bind(latch, args)).to.throw(/check your appId and secretKey/);
+            expect(() => init(appConfig)).to.throw(Error);
+            expect(() => init(appConfig)).to.throw(/check your appId and secretKey/);
         });
 
-        it("should stop if the secretKey is not 40 chars", function () {
-            var args = { appId: '12345678901234567890', secretKey: '1234' }
+        it("should stop if the secretKey is not 40 chars", async function () {
+            let appConfig = { appId: '12345678901234567890', secretKey: '1234' }
 
-            expect(latch.init.bind(latch, args)).to.throw(Error);
-            expect(latch.init.bind(latch, args)).to.throw(/check your appId and secretKey/);
+            expect(() => init(appConfig)).to.throw(Error);
+            expect(() => init(appConfig)).to.throw(/check your appId and secretKey/);
         });
 
-        it("should parse the hostname into an URI object", function () {
-            var args = { appId: '12345678901234567890', secretKey: '1234567890123456789012345678901234567890', hostname: 'https://latch.tu.com' }
+        it("should parse the hostname into an URI object", async function () {
+            let appConfig = { appId: '12345678901234567890', secretKey: '1234567890123456789012345678901234567890', hostname: 'https://latch.tu.com' }
 
-            latch.init(args);
+            init(appConfig);
             expect(config.API_HOST.protocol).to.equal('https:');
             expect(config.API_HOST.hostname).to.equal('latch.tu.com');
         });
 
-        it("should receive an API error", function (done) {
-            var args = { appId: '12345678901234567890', secretKey: '1234567890123456789012345678901234567890' }
+        it("should receive an API error", async function () {
+            let appConfig = { appId: '12345678901234567890', secretKey: '1234567890123456789012345678901234567890' };
+            init(appConfig);
+            let response = await status('1234');
+            expect(response).to.have.a.property('error').that.is.an('object');
+            expect(response.error).to.have.a.property('code', 102);
+            expect(response.error).to.have.a.property('message', 'Invalid application signature');
+        });
+    });
 
-            latch.init(args);
-            latch.status('1234', '', '', function (err, result) {
-                expect(result).to.have.a.property('error').that.is.an('object');
-                expect(result.error).to.have.a.property('code', 102);
-                expect(result.error).to.have.a.property('message', 'Invalid application signature');
-                done();
-            });
+    describe("Latch API requests with valid config", function () {
+        before(function() {
+            init(appValidConfig);
+        })
+
+        let accountId;
+        let operationId;
+        let instanceId;
+        let totpId;
+
+        it("check pair", async function () {
+            let responsePair = await pair(code);
+            expect(responsePair).to.have.a.property('data').that.is.an('object');
+            expect(responsePair.data).to.have.a.property('accountId').that.is.an('string');
+            accountId = responsePair.data.accountId;
         });
 
-        describe("Latch API requests with valid config", function () {
-            before(function () {
-                latch.init(appValidConfig);
-            })
+        it("check create operation", async function () {
+            let responseCreateOperation = await createOperation(appId, NAME_OPERATION, TWO_FACTOR.DISABLED, LOCK_ON_REQUEST.DISABLED);
+            expect(responseCreateOperation).to.have.a.property('data').that.is.an('object');
+            expect(responseCreateOperation.data).to.have.a.property('operationId').that.is.an('string');
+            operationId = responseCreateOperation.data.operationId;
+        });
 
-            let accountId;
-            let operationId;
-            let instanceId;
-            let totpId;
+        it("check status", async function () {
+            let response = await status(accountId);
+            expect(response).to.have.a.property('data').that.is.an('object');
+            expect(response.data).to.have.a.property('operations').that.is.an('object');
+            expect(response.data.operations).to.have.a.property(appId).that.is.an('object');
+            expect(response.data.operations[appId]).to.have.a.property('status').that.is.an('string');
+        });
 
-            describe("Latch API requests with valid config", function () {
-                it("check pair", function (done) {
-                    latch.pair(code, function (err, result) {
-                        expect(result).to.have.a.property('data').that.is.an('object');
-                        expect(result.data).to.have.a.property('accountId').that.is.an('string');
-                        accountId = result.data.accountId;
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check create operation", function (done) {
-                    latch.createOperation(appId, NAME_OPERATION, 'DISABLED', 'DISABLED', function (err, result) {
-                        expect(result).to.have.a.property('data').that.is.an('object');
-                        expect(result.data).to.have.a.property('operationId').that.is.an('string');
-                        operationId = result.data.operationId;
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check status", function (done) {
-                    latch.status(accountId, '', '', function (err, result) {
-                        expect(result).to.have.a.property('data').that.is.an('object');
-                        expect(result.data).to.have.a.property('operations').that.is.an('object');
-                        expect(result.data.operations).to.have.a.property(appId).that.is.an('object');
-                        expect(result.data.operations[appId]).to.have.a.property('status').that.is.an('string');
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check lock", function (done) {
-                    latch.lock(accountId, undefined, function (err, result) {
-                        expect(result).to.be.an('object').that.is.empty;
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check unlock", function (done) {
-                    latch.unlock(accountId, undefined, function (err, result) {
-                        expect(result).to.be.an('object').that.is.empty;
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check history", function (done) {
-                    latch.history(accountId, undefined, undefined, function (err, result) {
-                        expect(result).to.have.a.property('data').that.is.an('object');
-                        expect(result.data).to.have.a.property('history').that.is.an('array');
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check operationStatus", function (done) {
-                    latch.operationStatus(accountId, appId, undefined, undefined, function (err, result) {
-                        expect(result).to.have.a.property('data').that.is.an('object');
-                        expect(result.data).to.have.a.property('operations').that.is.an('object');
-                        expect(result.data.operations).to.have.a.property(appId).that.is.an('object');
-                        expect(result.data.operations[appId]).to.have.a.property('status').that.is.an('string');
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check getOperations", function (done) {
-                    latch.getOperations(appId, function (err, result) {
-                        expect(result).to.have.a.property('data').that.is.an('object');
-                        expect(result.data).to.have.a.property('operations').that.is.an('object');
-                        done();
-                    });
+        it("check lock", async function () {
+            let response = await lock(accountId);
+            expect(response).to.be.an('object').that.is.empty;
+        });
 
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check updateOperation", function (done) {
-                    latch.updateOperation(operationId, NAME_OPERATION + '-update-1', undefined, undefined, function (err, result) {
-                        expect(result).to.be.an('object').that.is.empty;
-                        latch.updateOperation(operationId, NAME_OPERATION + '-update-2', 'MANDATORY', 'MANDATORY', function (err, result) {
-                            expect(result).to.be.an('object').that.is.empty;
-                            done();
-                        });
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check create instance", function (done) {
-                    latch.createInstance(NAME_INSTANCE, accountId, operationId, function (err, result) {
-                        expect(result).to.have.a.property('data').that.is.an('object');
-                        expect(result.data).to.have.a.property('instances').that.is.an('object');
-                        instanceId = Object.entries(result.data.instances).find(([_, value]) => value == NAME_INSTANCE)[0];
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check getInstances", function (done) {
-                    latch.getInstances(accountId, operationId, function (err, result) {
-                        expect(result).to.have.a.property('data').that.is.an('object');
-                        expect(result.data).to.have.a.property(instanceId).that.is.an('object');
-                        expect(result.data[instanceId]).to.have.a.property('name', NAME_INSTANCE);
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check instanceStatus", function (done) {
-                    latch.instanceStatus(instanceId, accountId, operationId, undefined, undefined, function (err, result) {
-                        expect(result).to.have.a.property('data').that.is.an('object');
-                        expect(result.data).to.have.a.property('operations').that.is.an('object');
-                        expect(result.data.operations).to.have.a.property(instanceId).that.is.an('object');
-                        expect(result.data.operations[instanceId]).to.have.a.property('status').that.is.an('string');
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check updateInstance", function (done) {
-                    latch.updateInstance(instanceId, accountId, operationId, NAME_INSTANCE + '-update-1', undefined, undefined, function (err, result) {
-                        expect(result).to.be.an('object').that.is.empty;
-                        latch.updateInstance(instanceId, accountId, operationId, NAME_INSTANCE + '-update-1', 'MANDATORY', 'MANDATORY', function (err, result) {
-                            expect(result).to.be.an('object').that.is.empty;
-                            done();
-                        });
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check delete instance", function (done) {
-                    latch.deleteInstance(instanceId, accountId, operationId, function (err, result) {
-                        expect(result).to.be.an('object').that.is.empty;
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check create totp", function (done) {
-                    latch.createTotp(email, NAME_TOTP, function (err, result) {
-                        expect(result).to.have.a.property('data').that.is.an('object');
-                        expect(result.data).to.have.a.property('totpId').that.is.an('string');
-                        totpId = result.data.totpId;
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check getTotp", function (done) {
-                    latch.getTotp(totpId, function (err, result) {
-                        expect(result).to.have.a.property('data').that.is.an('object');
-                        expect(result.data).to.have.a.property('totpId', totpId);
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check validateTotp", function (done) {
-                    latch.validateTotp(totpId, "123456", function (err, result) {
-                        expect(result).to.have.a.property('error').that.is.an('object');
-                        expect(result.error).to.have.a.property('code', 306);
-                        expect(result.error).to.have.a.property('message', 'Invalid totp code');
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check delete totp", function (done) {
-                    latch.deleteTotp(totpId, function (err, result) {
-                        expect(result).to.be.an('object').that.is.empty;
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check checkControlStatus", function (done) {
-                    latch.checkControlStatus("12345", function (err, result) {
-                        expect(result).to.have.a.property('error').that.is.an('object');
-                        expect(result.error).to.have.a.property('code', 1100);
-                        expect(result.error).to.have.a.property('message', 'Authorization control not found');
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check delete operation", function (done) {
-                    latch.deleteOperation(operationId, function (err, result) {
-                        expect(result).to.be.an('object').that.is.empty;
-                        done();
-                    });
-                });
-            });
-            describe("Latch API requests with valid config", function () {
-                it("check unpair", function (done) {
-                    latch.unpair(accountId, function (err, result) {
-                        expect(result).to.be.an('object').that.is.empty;
-                        done();
-                    });
-                });
-            });
+        it("check unlock", async function () {
+            let response = await unlock(accountId);
+            expect(response).to.be.an('object').that.is.empty;
+        });
+
+        it("check history", async function () {
+            let response = await history(accountId);
+            expect(response).to.have.a.property('data').that.is.an('object');
+            expect(response.data).to.have.a.property('history').that.is.an('array');
+        });
+
+        it("check operationStatus", async function () {
+            let response = await operationStatus(accountId, appId);
+            expect(response).to.have.a.property('data').that.is.an('object');
+            expect(response.data).to.have.a.property('operations').that.is.an('object');
+            expect(response.data.operations).to.have.a.property(appId).that.is.an('object');
+            expect(response.data.operations[appId]).to.have.a.property('status').that.is.an('string');
+        });
+
+        it("check getOperations", async function () {
+            let response = await getOperations(appId);
+            expect(response).to.have.a.property('data').that.is.an('object');
+            expect(response.data).to.have.a.property('operations').that.is.an('object');
+
+        });
+
+        it("check updateOperation", async function () {
+            let response = await updateOperation(operationId, 'test');
+            expect(response).to.be.an('object').that.is.empty;
+            response = await updateOperation(operationId, 'test', TWO_FACTOR.MANDATORY, LOCK_ON_REQUEST.MANDATORY);
+            expect(response).to.be.an('object').that.is.empty;
+        });
+
+        it("check create instance", async function () {
+            let responseCreateInstance = await createInstance(NAME_INSTANCE, accountId, operationId);
+            expect(responseCreateInstance).to.have.a.property('data').that.is.an('object');
+            expect(responseCreateInstance.data).to.have.a.property('instances').that.is.an('object');
+            instanceId = Object.entries(responseCreateInstance.data.instances).find(([_, value]) => value == NAME_INSTANCE)[0];
+        });
+
+        it("check getInstances", async function () {
+            let response = await getInstances(accountId, operationId);
+            expect(response).to.have.a.property('data').that.is.an('object');
+            expect(response.data).to.have.a.property(instanceId).that.is.an('object');
+            expect(response.data[instanceId]).to.have.a.property('name',NAME_INSTANCE);
+        });
+
+        it("check instanceStatus", async function () {
+            let response = await instanceStatus(instanceId, accountId, operationId);
+            expect(response).to.have.a.property('data').that.is.an('object');
+            expect(response.data).to.have.a.property('operations').that.is.an('object');
+            expect(response.data.operations).to.have.a.property(instanceId).that.is.an('object');
+            expect(response.data.operations[instanceId]).to.have.a.property('status').that.is.an('string');
+        });
+
+        it("check updateInstance", async function () {
+            let response = await updateInstance(instanceId, accountId, operationId, 'instace-testUpdate');            
+            expect(response).to.be.an('object').that.is.empty;
+            response = await updateInstance(instanceId, accountId, operationId, 'instace-testUpdate', TWO_FACTOR.MANDATORY, LOCK_ON_REQUEST.MANDATORY);
+            expect(response).to.be.an('object').that.is.empty;
+        });
+
+        it("check delete instance", async function () {
+            let responseDeleteInstance = await deleteInstance(instanceId, accountId,operationId)
+            expect(responseDeleteInstance).to.be.an('object').that.is.empty;
+        });
+
+        it("check create totp", async function () {
+            let responseCreateTotp = await createTotp(email, NAME_TOTP);
+            expect(responseCreateTotp).to.have.a.property('data').that.is.an('object');
+            expect(responseCreateTotp.data).to.have.a.property('totpId').that.is.an('string');
+            totpId = responseCreateTotp.data.totpId;
+        });
+
+        it("check getTotp", async function () {
+            let response = await getTotp(totpId);
+            expect(response).to.have.a.property('data').that.is.an('object');
+            expect(response.data).to.have.a.property('totpId',totpId);
+        });
+
+        it("check validateTotp", async function () {
+            let response = await validateTotp(totpId, "123456");
+            expect(response).to.have.a.property('error').that.is.an('object');
+            expect(response.error).to.have.a.property('code', 306);
+            expect(response.error).to.have.a.property('message', 'Invalid totp code');
+        });
+
+        it("check delete totp", async function () {
+            let responseDeleteTotp = await deleteTotp(totpId, accountId)
+            expect(responseDeleteTotp).to.be.null;
+        });
+
+        it("check checkControlStatus", async function () {
+            let response = await checkControlStatus("12345");
+            expect(response).to.have.a.property('error').that.is.an('object');
+            expect(response.error).to.have.a.property('code', 1100);
+            expect(response.error).to.have.a.property('message', 'Authorization control not found');
+        });
+
+        it("check delete operation", async function () {
+            let responseDeleteOperation = await deleteOperation(operationId);
+            expect(responseDeleteOperation).to.be.an('object').that.is.empty;
+        });
+
+        it("check unpair", async function () {
+            let responseUnpair = await unpair(accountId);
+            expect(responseUnpair).to.be.an('object').that.is.empty;
         });
     });
 });
