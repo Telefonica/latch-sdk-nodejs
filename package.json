@@ -18,7 +18,7 @@
   "author": {
     "name": "TelefonicaDigital",
     "email": "soporte.latch@telefonica.com",
-    "url": "https://latch.telefonica.com/"
+    "url": "https://latch.tu.com/"
   },
   "licenses": [
     {
@@ -27,11 +27,14 @@
     }
   ],
   "main": "index.js",
+  "type": "commonjs",
   "devDependencies": {
-    "chai": "^4.3.7",
-    "mocha": "^10.2.0"
+    "chai": "^5.1.1",
+    "mocha": "^10.7.3"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "mocha"
+  },
   "engines": {
     "node": ">= 0.10.0"
   }

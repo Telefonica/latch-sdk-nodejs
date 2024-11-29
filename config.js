@@ -1,6 +1,6 @@
 /*
  * Latch NodeJS SDK
- * Copyright (C) 2023 Telefonica Digital
+ * Copyright (C) 2024 Telefonica Innovación Digital
 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,7 @@ var config = {
     appId: '',
     secretKey: '',
     
-    API_HOST: "https://latch.telefonica.com:443",
+    API_HOST: "https://latch.tu.com:443",
     API_CHECK_STATUS_URL: "/api/" + API_VERSION + "/status",
     API_PAIR_URL: "/api/" + API_VERSION + "/pair",
     API_PAIR_WITH_ID_URL: "/api/" + API_VERSION + "/pairWithId",
@@ -35,6 +35,8 @@ var config = {
     API_SUBSCRIPTION_URL: "/api/" + API_VERSION + "/subscription",
     API_APPLICATION_URL: "/api/" + API_VERSION + "/application",
     API_INSTANCE_URL: "/api/" + API_VERSION + "/instance",
+    API_TOTP_URL: "/api/" + API_VERSION + "/totps",
+    API_CONTROL_STATUS_CHECK_URL: "/api/" + API_VERSION + "/control-status",
     
     AUTHORIZATION_HEADER_NAME: "Authorization",
     DATE_HEADER_NAME: "X-11Paths-Date",
