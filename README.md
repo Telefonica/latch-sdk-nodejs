@@ -12,27 +12,21 @@
 
 #### USING THE SDK IN NODEJS ####
 
-* You need to include the npm package 'latch-sdk' in your package.json file and then require the "latch-sdk" in your NodeJS file.
+* You need to include the npm package 'latch-sdk' in your package.json file and then import the "latch-sdk" with the needed functions in your NodeJS file.
 ```
-    var latch = require('latch-sdk');
+    import { init, pair ... } from 'latch-sdk';
 ```
 
 * Initialize latch with your AppId and SecretKey. Hostname and port are optional.
 ```
-    latch.init({ appId: 'MY_APP_ID', secretKey: 'MY_SECRET_KEY', hostname: 'HOSTNAME:PORT' });
+    init({ appId: 'MY_APP_ID', secretKey: 'MY_SECRET_KEY', hostname: 'HOSTNAME:PORT' });
 ```
 
 * Call to Latch Server. Pairing will return an account id that you should store for future api calls
 ```
     let PAIRING_CODE = "<PAIRING_CODE>"
-    
-    let response = latch.pair(PAIRING_CODE, function (err, result) {
-        if (err) {
-            console.log(util.inspect(err, {showHidden: true, depth: null, colors: true}));
-        } else {
-            console.log(util.inspect(result, {showHidden: true, depth: null, colors: true}));
-        }
-    });
+    let response = await pair(PAIRING_CODE);
+    console.dir(response, { depth: null });
 ```
 
 #### USING THE SDK IN NODEJS FOR WEB3 SERVICES ####
@@ -54,23 +48,10 @@ The two additional parameters are:
 - MESSAGE TO SIGN : "Latch-Web3"
 
 * Call to Latch Server for pairing as usual, but with the newly methods:
-```
-    let MY_APPID = "<MY_APPID>"
-    let MY_SECRETKEY = "<MY_SECRETKEY>"
-    
-    let WEB3WALLET = "<WEB3WALLET>"
-    let WEB3SIGNATURE = "<WEB3SIGNATURE>"
-    let PAIRING_CODE = "<PAIRING_CODE>"
-    
-    latch.init({ appId: MY_APPID, secretKey: MY_SECRETKEY });
-    
-    let response = latch.pair(PAIRING_CODE, function (err, result) {
-        if (err) {
-            console.log(util.inspect(err, {showHidden: true, depth: null, colors: true}));
-        } else {
-            console.log(util.inspect(result, {showHidden: true, depth: null, colors: true}));
-        }
-    }, WEB3WALLET, WEB3SIGNATURE);
+```   
+    init({ appId: <MY_APPID>, secretKey: <MY_SECRETKEY> });
+    let response = await pair(<PAIRING_CODE>, <WEB3WALLET>, <WEB3SIGNATURE>);
+    console.dir(response, { depth: null });
 ```
 
 You have an example of use in the file [example](examples/example.js)
