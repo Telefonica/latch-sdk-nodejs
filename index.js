@@ -101,14 +101,18 @@ var latch = {
      * @param {string} [web3Wallet] Wallet identificador
      * @param {string} [web3Signature] Wallet signature
      */
-    pairWithId: function (accountId, next, web3Wallet, web3Signature) {
-        if (typeof web3Wallet === 'undefined' || typeof web3Signature === 'undefined') {
-            _http("GET", config.API_PAIR_WITH_ID_URL + "/" + accountId, '', '', '', next);
+    pairWithId: function (accountId, next, web3Wallet, web3Signature, commonName) {
+        let method = 'GET';
+        let params = {};
+        if ((web3Wallet ?? '' !== '') && (web3Signature ?? '' !== '')) {
+            method = 'POST';
+            params = { ...params, wallet: web3Wallet, signature: web3Signature };
         }
-        else {
-            let params = { wallet: web3Wallet, signature: web3Signature };
-            _http("POST", config.API_PAIR_WITH_ID_URL + "/" + accountId, params, '', '', next);
+        if (commonName ?? '' !== '') {
+            method = 'POST';
+            params = { ...params, commonName };
         }
+        return _http(method, config.API_PAIR_WITH_ID_URL + "/" + accountId, params, '', '', next);
     },
 
     /**
@@ -119,14 +123,18 @@ var latch = {
      * @param {string} [web3Wallet] Wallet identificador
      * @param {string} [web3Signature] Wallet signature
      */
-    pair: function (token, next, web3Wallet, web3Signature) {
-        if (typeof web3Wallet === 'undefined' || typeof web3Signature === 'undefined') {
-            _http("GET", config.API_PAIR_URL + "/" + token, '', '', '', next);
+    pair: function (token, next, web3Wallet, web3Signature, commonName) {
+        let method = 'GET';
+        let params = {};
+        if ((web3Wallet ?? '' !== '') && (web3Signature ?? '' !== '')) {
+            method = 'POST';
+            params = { ...params, wallet: web3Wallet, signature: web3Signature };
         }
-        else {
-            let params = { wallet: web3Wallet, signature: web3Signature };
-            _http("POST", config.API_PAIR_URL + "/" + token, params, '', '', next);
+        if (commonName ?? '' !== '') {
+            method = 'POST';
+            params = { ...params, commonName };
         }
+        return _http(method, config.API_PAIR_URL + "/" + token, params, '', '', next);
     },
 
     /**
